@@ -1,0 +1,54 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "a1ffa94d4be0a1592f8f9b4e454a7a2a",
+    "content-hash": "d5c77b107b4d17f58e4ed86edfebf9e5",
+    "packages": [
+        {
+            "name": "kayako/php-api-library",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kayako/php-api-library.git",
+                "reference": "f20496a17139f1da409b6df2323a8547d62f4039"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kayako/php-api-library/zipball/f20496a17139f1da409b6df2323a8547d62f4039",
+                "reference": "f20496a17139f1da409b6df2323a8547d62f4039",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    ""
+                ],
+                "files": [
+                    "kyHelpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "PHP API library for Kayako",
+            "time": "2015-10-26 05:46:21"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "kayako/php-api-library": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.3.9"
+    },
+    "platform-dev": []
+}

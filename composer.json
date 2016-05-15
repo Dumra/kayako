@@ -1,0 +1,14 @@
+{
+    "require": {
+        "php": ">=5.3.9",
+        "kayako/php-api-library": "dev-master"               
+    },
+    "autoload": {
+        "psr-4": {
+            "Kayako\\": "app"
+        },
+        "files": [
+            "config/app.php"
+        ]
+    }    
+}
