@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb86462eb7a22f0358395f14f1588b471
+class ComposerStaticInit6c91b1c9f8ec316cba7819896cb4c4af
 {
     public static $files = array (
         '83a6a6643f876871878216b6df658b57' => __DIR__ . '/..' . '/kayako/php-api-library/kyHelpers.php',
@@ -89,9 +89,9 @@ class ComposerStaticInitb86462eb7a22f0358395f14f1588b471
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb86462eb7a22f0358395f14f1588b471::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb86462eb7a22f0358395f14f1588b471::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitb86462eb7a22f0358395f14f1588b471::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6c91b1c9f8ec316cba7819896cb4c4af::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6c91b1c9f8ec316cba7819896cb4c4af::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit6c91b1c9f8ec316cba7819896cb4c4af::$classMap;
 
         }, null, ClassLoader::class);
     }
