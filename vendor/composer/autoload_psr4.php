@@ -6,5 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'werx\\Config\\Providers\\' => array($vendorDir . '/werx/config/src/Providers'),
+    'werx\\Config\\' => array($vendorDir . '/werx/config/src'),
     'Kayako\\' => array($baseDir . '/app'),
 );

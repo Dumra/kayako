@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     '83a6a6643f876871878216b6df658b57' => $vendorDir . '/kayako/php-api-library/kyHelpers.php',
-    '7b6da17ee52fc1de63821b4ffee602db' => $baseDir . '/config/app.php',
 );

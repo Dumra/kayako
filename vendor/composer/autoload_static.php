@@ -4,14 +4,18 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit607d7d87478fc9133f52c6d7c27f3564
+class ComposerStaticInit9b57687c4fde66bf790d92542d0734cc
 {
     public static $files = array (
         '83a6a6643f876871878216b6df658b57' => __DIR__ . '/..' . '/kayako/php-api-library/kyHelpers.php',
-        '7b6da17ee52fc1de63821b4ffee602db' => __DIR__ . '/../..' . '/config/app.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'w' => 
+        array (
+            'werx\\Config\\Providers\\' => 22,
+            'werx\\Config\\' => 12,
+        ),
         'K' => 
         array (
             'Kayako\\' => 7,
@@ -19,6 +23,14 @@ class ComposerStaticInit607d7d87478fc9133f52c6d7c27f3564
     );
 
     public static $prefixDirsPsr4 = array (
+        'werx\\Config\\Providers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/werx/config/src/Providers',
+        ),
+        'werx\\Config\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/werx/config/src',
+        ),
         'Kayako\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -77,9 +89,9 @@ class ComposerStaticInit607d7d87478fc9133f52c6d7c27f3564
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit607d7d87478fc9133f52c6d7c27f3564::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit607d7d87478fc9133f52c6d7c27f3564::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit607d7d87478fc9133f52c6d7c27f3564::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9b57687c4fde66bf790d92542d0734cc::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9b57687c4fde66bf790d92542d0734cc::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit9b57687c4fde66bf790d92542d0734cc::$classMap;
 
         }, null, ClassLoader::class);
     }
