@@ -11,4 +11,5 @@ $config = new \werx\Config\Container($provider);
 # Load config/config.php
 $config->load('app', true);
 
+$app = $config->app();
 ?>

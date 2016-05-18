@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7c267a0af3eae308e26fc6b02b5dab3b",
-    "content-hash": "a285ddfecb2547a89692b6816e56aa12",
+    "hash": "1660630ccb6cf391536c9a46b9755a17",
+    "content-hash": "d588cd3d5010a03ac1ae6356cecf7473",
     "packages": [
         {
             "name": "kayako/php-api-library",
@@ -89,7 +89,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4"
+        "php": ">=5.5.9"
     },
     "platform-dev": []
 }
