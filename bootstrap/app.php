@@ -1,5 +1,6 @@
 <?php
-error_reporting(E_ERROR | E_PARSE);    
+error_reporting(E_ERROR | E_PARSE); 
+date_default_timezone_set('Europe/Kiev');
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/kayako/php-api-library/kyIncludes.php';
 

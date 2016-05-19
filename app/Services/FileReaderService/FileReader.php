@@ -30,7 +30,7 @@ class FileReader
 			   continue;
 			} 	
 			$csv[] = array_map(function($item){	 
-				return str_replace("\r\n", " ", $item);	
+				return str_replace("\r", "", str_replace("\n", " ", $item));				
 			}, $values);	 
 		}
 		fclose($fh);
@@ -46,9 +46,7 @@ class FileReader
 	
 	public function export($pathToOutput = false)
 	{		
-		$this->export->export($this->readFile(), $pathToOutput);
+		$this->export->export($this->readFile(), $pathToOutput);		
 	}
-	
-	
 	
 }

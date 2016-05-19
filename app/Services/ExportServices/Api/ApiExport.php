@@ -2,7 +2,8 @@
 
 namespace Kayako\Services\ExportServices\Api;
 
-use Kayako\Services\ExportServices\AbstractExport;;
+use Kayako\Services\ExportServices\AbstractExport;
+use Kayako\Services\LoggerService\Logger;
 
 class ApiExport extends AbstractExport
 {
@@ -13,28 +14,63 @@ class ApiExport extends AbstractExport
 		//\kyConfig::get()->setDebugEnabled(true);
 	}
 	
-	public function export($data, $count = false)
+	public function export($data, $count = false, $startIndex = 0)
 	{		
-		$registered_user_group = \kyUserGroup::getAll()
-				->filterByTitle("Registered")
-				->first();
-		/*$user_organization = \kyUserOrganization::getAll()
-				->filterByName("GFL")
-				->first();*/
-	//	$answers = [];
-		for($i = 0; $i < 2; $i++){
-			$user = $registered_user_group
-				->newUser($data[$i]['firstname'] . ' ' . $data[$i]['lastname'], $data[$i]['email'], $this->generateRandomString())
-				//->setUserOrganization($user_organization) //userorganizationid			
-				->setPhone($data[$i]['telephone'])
-				->setSendWelcomeEmail(false) //sendwelcomeemail
-				->create();	
-		//	$answers[] = $user;
+		$index;
+		$count = (!$count) ? count($data) : $count;
+		try {		
+			$registered_user_group = \kyUserGroup::getAll()
+					->filterByTitle("Registered")
+					->first();	
+			/*$user_organization = \kyUserOrganization::getAll()
+					->filterByName("GFL")
+					->first();*/
+			//$answers = [];
+			for($i = $startIndex; $i < $count; $i++){
+				$index = $i;
+				$organization = null;						
+				$user = $registered_user_group
+					->newUser($data[$i]['firstname'] . ' ' . $data[$i]['lastname'], $data[$i]['email'], $this->generateRandomString())						
+					->setPhone($data[$i]['telephone'])
+					->setSendWelcomeEmail(false) //sendwelcomeemail
+					->create();	
+				if ($data[$i]['company'] !== '') {
+					$organization = $this->createOrganization($data[$i]);
+					$user = \kyUser::get($user->getId());
+					$user->setUserOrganization($organization);
+					$user->update();
+				}				
+				//$answers[] = $organization;
+			}
+		} 
+		catch (\Exception $ex) {
+			$tmp = $index  + 1;
+			$errorStr = 'Cought some exception. Error: ' . $ex->getMessage() . "\n"				
+					. 'Number failed user:' . $tmp . "\n"
+					. 'Amount data: ' . $count . "\n\n";
+			Logger::appendLogFile($this->app['log_file_apiExport'], $errorStr);	
+			sleep(10);
+			$this->export($data, $count, $index + 1);
 		}
 		
-	//	var_dump($answers);
+		//var_dump($answers);
 	}
 	
+	private function createOrganization($data)
+	{
+		$organization = \kyUserOrganization::createNew()					
+						->setName($data['company'])
+						->setType(\kyUserOrganization::TYPE_RESTRICTED)
+						->setAddress($data['address'])
+						->setCity($data['city'])
+						->setCountry($data['country'])
+						->setPostalCode($data['postal'])
+						->setState($data['state'])
+						->setWebsite($data['website'])
+						->create();
+		
+		return $organization;
+	}
 	
 	private function generateRandomString($length = 10)
     {
@@ -47,5 +83,4 @@ class ApiExport extends AbstractExport
         }
         return $randomString;
     }
-	
 }

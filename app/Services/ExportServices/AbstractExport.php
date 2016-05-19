@@ -23,17 +23,18 @@ abstract class AbstractExport
 				'website' => ''
 			];
 	
+	protected $configDir = '/../../../config';	
 	protected $app;
 	
 	public function __construct()
 	{
-		$provider = new \werx\Config\Providers\ArrayProvider(__DIR__ . '/../../../config');		
+		$provider = new \werx\Config\Providers\ArrayProvider(__DIR__ . $this->configDir);		
 		$config = new \werx\Config\Container($provider);		
 		$config->load('app', true);
 		$this->app = $config->app();
 	}
 	
-	abstract protected function export($data, $pathToOutput = false);
+	abstract protected function export($data, $pathToOutput = false, $startIndex = 0);
 
 	public function convertToFormatData($data)
 	{		
@@ -46,16 +47,23 @@ abstract class AbstractExport
 			$userInfoPrepared['telephone'] = $userInfoRaw['billing_telephone'];
 			$userInfoPrepared['website'] = $this->app['TI_link'];			
 
-			if (trim($userInfoRaw['billing_company']) !== '') {
+			if (trim($userInfoRaw['shipping_company']) !== '') {
+				$userInfoPrepared['company'] = trim($userInfoRaw['shipping_company']);
+				$userInfoPrepared['address'] = trim($userInfoRaw['shipping_street']);
+				$userInfoPrepared['city'] = trim($userInfoRaw['shipping_city']);
+				$userInfoPrepared['state'] = trim($userInfoRaw['shipping_region_id']);
+				$userInfoPrepared['postal'] = trim($userInfoRaw['shipping_postcode']);
+				$userInfoPrepared['country'] = trim($userInfoRaw['shipping_country_id']);
+			} elseif (trim($userInfoRaw['billing_company']) !== ''){
 				$userInfoPrepared['company'] = trim($userInfoRaw['billing_company']);
 				$userInfoPrepared['address'] = trim($userInfoRaw['billing_street']);
 				$userInfoPrepared['city'] = trim($userInfoRaw['billing_city']);
 				$userInfoPrepared['state'] = trim($userInfoRaw['billing_region_id']);
 				$userInfoPrepared['postal'] = trim($userInfoRaw['billing_postcode']);
 				$userInfoPrepared['country'] = trim($userInfoRaw['billing_country_id']);
-			} elseif (trim($userInfoRaw['shipping_company']) !== ''){
-				$userInfoPrepared['company'] = trim($userInfoRaw['shipping_company']);
-				$userInfoPrepared['address'] = trim($userInfoRaw['bshipping_street']);
+			} elseif (trim($userInfoRaw['shipping_street']) !== '') {
+				$userInfoPrepared['company'] = 'Company';
+				$userInfoPrepared['address'] = trim($userInfoRaw['shipping_street']);
 				$userInfoPrepared['city'] = trim($userInfoRaw['shipping_city']);
 				$userInfoPrepared['state'] = trim($userInfoRaw['shipping_region_id']);
 				$userInfoPrepared['postal'] = trim($userInfoRaw['shipping_postcode']);
@@ -67,13 +75,6 @@ abstract class AbstractExport
 				$userInfoPrepared['state'] = trim($userInfoRaw['billing_region_id']);
 				$userInfoPrepared['postal'] = trim($userInfoRaw['billing_postcode']);
 				$userInfoPrepared['country'] = trim($userInfoRaw['billing_country_id']);
-			} elseif (trim($userInfoRaw['shipping_street']) !== '') {
-				$userInfoPrepared['company'] = 'Company';
-				$userInfoPrepared['address'] = trim($userInfoRaw['bshipping_street']);
-				$userInfoPrepared['city'] = trim($userInfoRaw['shipping_city']);
-				$userInfoPrepared['state'] = trim($userInfoRaw['shipping_region_id']);
-				$userInfoPrepared['postal'] = trim($userInfoRaw['shipping_postcode']);
-				$userInfoPrepared['country'] = trim($userInfoRaw['shipping_country_id']);
 			}	
 			$result[] = $userInfoPrepared;
 		}

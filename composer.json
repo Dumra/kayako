@@ -8,5 +8,10 @@
         "psr-4": {
             "Kayako\\": "app"
         }
-    }    
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php -r \"mkdir('vendor/log');\""
+        ]
+    }
 }

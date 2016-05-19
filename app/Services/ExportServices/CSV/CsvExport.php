@@ -6,7 +6,7 @@ use Kayako\Services\ExportServices\AbstractExport;
 
 class CsvExport extends AbstractExport
 {	
-	public function export($data, $pathToOutput = false)
+	public function export($data, $pathToOutput = false, $startIndex = 0)
 	{
 		$fp = fopen($pathToOutput, 'w');
 
