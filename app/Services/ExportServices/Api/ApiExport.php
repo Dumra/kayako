@@ -22,10 +22,7 @@ class ApiExport extends AbstractExport
 			$registered_user_group = \kyUserGroup::getAll()
 					->filterByTitle("Registered")
 					->first();	
-			/*$user_organization = \kyUserOrganization::getAll()
-					->filterByName("GFL")
-					->first();*/
-			//$answers = [];
+			
 			for($i = $startIndex; $i < $count; $i++){
 				$index = $i;
 				$organization = null;						
@@ -40,7 +37,6 @@ class ApiExport extends AbstractExport
 					$user->setUserOrganization($organization);
 					$user->update();
 				}				
-				//$answers[] = $organization;
 			}
 		} 
 		catch (\Exception $ex) {
@@ -49,11 +45,11 @@ class ApiExport extends AbstractExport
 					. 'Number failed user:' . $tmp . "\n"
 					. 'Amount data: ' . $count . "\n\n";
 			Logger::appendLogFile($this->app['log_file_apiExport'], $errorStr);	
-			sleep(10);
+			//sleep(1);
 			$this->export($data, $count, $index + 1);
 		}
 		
-		//var_dump($answers);
+		//var_dump($count);
 	}
 	
 	private function createOrganization($data)

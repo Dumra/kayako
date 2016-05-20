@@ -9,11 +9,13 @@ class FileReader
 	private $pathToFile;
 	private $columnHeaders;	
 	private $export;
+	private $otherFormat;
 	
-	public function __construct($pathToFile, AbstractExport $export)
+	public function __construct($pathToFile, AbstractExport $export, $otherFormat = false)
 	{
 		$this->pathToFile = $pathToFile;
 		$this->export = $export;		
+		$this->otherFormat = $otherFormat;
 	}
 	
 	public function getColumnHeaders()
@@ -21,7 +23,7 @@ class FileReader
 		return $this->columnHeaders;
 	}
 	
-	public function readFile()
+	public function readFile($otherFormat)
 	{
 		$fh = fopen($this->pathToFile, 'r');
 		$csv = [];
@@ -41,12 +43,12 @@ class FileReader
 
 		$this->columnHeaders = array_shift($csv);		
 		
-		return $this->export->convertToFormatData($csv);
+		return $this->export->convertToFormatData($csv, $otherFormat);
 	}
 	
 	public function export($pathToOutput = false)
 	{		
-		$this->export->export($this->readFile(), $pathToOutput);		
+		$this->export->export($this->readFile($this->otherFormat), $pathToOutput);		
 	}
 	
 }
