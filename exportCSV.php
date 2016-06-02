@@ -10,8 +10,8 @@ $time_start = microtime(true);
 
 try {
 	Logger::createLogFile($app['log_file_csvExport'], "Starting export csv script....\n\n");	
-	$fileReader = new FileReader($app['source_data'], new CsvExport);
-	//$fileReader = new FileReader($app['source_data'], new CsvExport, true); // for other 2 files
+	//$fileReader = new FileReader($app['source_data'], new CsvExport);
+	$fileReader = new FileReader($app['source_data'], new CsvExport, true); // for other 2 files
 	$fileReader->export($app['import_csv']);
 } catch (Exception $ex) {
 	Logger::appendLogFile($app['log_file_csvExport'], 

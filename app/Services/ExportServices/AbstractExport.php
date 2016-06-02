@@ -4,86 +4,97 @@ namespace Kayako\Services\ExportServices;
 
 abstract class AbstractExport
 {
+
 	protected $userInfoPrepared = [
-				'email' => '',
-				'firstname' => '',
-				'lastname' => '',
-				'company' => '',
-				'telephone' => '',
-				'salutation' => '',
-				'designation' => '',
-				'email_domain_filter' => '',
-				'address' => '',
-				'city' => '',
-				'state' => '',
-				'postal' => '',
-				'country' => '',
-				'phone' => '',
-				'fax' => '',
-				'website' => ''
-			];
-	
-	protected $configDir = '/../../../config';	
+		'email' => '',
+		'firstname' => '',
+		'lastname' => '',
+		'company' => '',
+		'telephone' => '',
+		'salutation' => '',
+		'designation' => '',
+		'email_domain_filter' => '',
+		'address' => '',
+		'city' => '',
+		'state' => '',
+		'postal' => '',
+		'country' => '',
+		'phone' => '',
+		'fax' => '',
+		'website' => ''
+	];
+	protected $configDir = '/../../../config';
 	protected $app;
-	private $unknownCompany = 'Company';	
-	
+	private $unknownCompany = 'Company';
+
 	public function __construct()
 	{
-		$provider = new \werx\Config\Providers\ArrayProvider(__DIR__ . $this->configDir);		
-		$config = new \werx\Config\Container($provider);		
+		$provider = new \werx\Config\Providers\ArrayProvider(__DIR__ . $this->configDir);
+		$config = new \werx\Config\Container($provider);
 		$config->load('app', true);
 		$this->app = $config->app();
 	}
-	
+
 	abstract protected function export($data, $pathToOutput = false, $startIndex = 0);
 
-	public function convertToFormatData($data, $otherFormat)
-	{		
+	public function convertToFormatData($data, $otherFormat, $pathToFile)
+	{
+		$webSite = $this->determineWebsite($pathToFile);		
 		$preparedData = null;
-		if ($otherFormat === false){
-			$preparedData = $this->parseFullFormat($data);
+		if ($otherFormat === false)
+		{
+			$preparedData = $this->parseFullFormat($data, $webSite);
 		}
-		else {
-			return $preparedData = $this->parsePartialFormal($data);
+		else
+		{
+			return $preparedData = $this->parsePartialFormal($data, $webSite);
 		}
-		
+
 		return $preparedData;
 	}
-	
-	private function parseFullFormat($data)
+
+	private function parseFullFormat($data, $webSite)
 	{
 		$result = [];
 		$counter = 0;
-		foreach ($data as $userInfoRaw) {
+		foreach ($data as $userInfoRaw)
+		{
 			$userInfoPrepared = $this->userInfoPrepared;
 			$userInfoPrepared['email'] = $userInfoRaw['email'];
 			$userInfoPrepared['firstname'] = $userInfoRaw['firstname'];
 			$userInfoPrepared['lastname'] = $userInfoRaw['lastname'];
 			$userInfoPrepared['telephone'] = $userInfoRaw['billing_telephone'];
-			$userInfoPrepared['website'] = $this->app['TI_link'];			
+			$userInfoPrepared['website'] = $webSite;
 
-			if (trim($userInfoRaw['shipping_company']) !== '') {
+			if (trim($userInfoRaw['shipping_company']) !== '')
+			{
 				$userInfoPrepared['company'] = trim($userInfoRaw['shipping_company']);
 				$userInfoPrepared['address'] = trim($userInfoRaw['shipping_street']);
 				$userInfoPrepared['city'] = trim($userInfoRaw['shipping_city']);
 				$userInfoPrepared['state'] = trim($userInfoRaw['shipping_region_id']);
 				$userInfoPrepared['postal'] = trim($userInfoRaw['shipping_postcode']);
 				$userInfoPrepared['country'] = trim($userInfoRaw['shipping_country_id']);
-			} elseif (trim($userInfoRaw['billing_company']) !== ''){
+			}
+			elseif (trim($userInfoRaw['billing_company']) !== '')
+			{
 				$userInfoPrepared['company'] = trim($userInfoRaw['billing_company']);
 				$userInfoPrepared['address'] = trim($userInfoRaw['billing_street']);
 				$userInfoPrepared['city'] = trim($userInfoRaw['billing_city']);
 				$userInfoPrepared['state'] = trim($userInfoRaw['billing_region_id']);
 				$userInfoPrepared['postal'] = trim($userInfoRaw['billing_postcode']);
 				$userInfoPrepared['country'] = trim($userInfoRaw['billing_country_id']);
-			} elseif (trim($userInfoRaw['shipping_street']) !== '') {
+			}
+			elseif (trim($userInfoRaw['shipping_street']) !== '')
+			{
 				$userInfoPrepared['company'] = $this->unknownCompany;
 				$userInfoPrepared['address'] = trim($userInfoRaw['shipping_street']);
 				$userInfoPrepared['city'] = trim($userInfoRaw['shipping_city']);
 				$userInfoPrepared['state'] = trim($userInfoRaw['shipping_region_id']);
 				$userInfoPrepared['postal'] = trim($userInfoRaw['shipping_postcode']);
 				$userInfoPrepared['country'] = trim($userInfoRaw['shipping_country_id']);
-			} elseif (trim($userInfoRaw['billing_street']) !== '') {
+			}
+			elseif (trim($userInfoRaw['billing_street']) !== '')
+			{
 				$userInfoPrepared['company'] = $this->unknownCompany;
 				$userInfoPrepared['address'] = trim($userInfoRaw['billing_street']);
 				$userInfoPrepared['city'] = trim($userInfoRaw['billing_city']);
@@ -91,8 +102,9 @@ abstract class AbstractExport
 				$userInfoPrepared['postal'] = trim($userInfoRaw['billing_postcode']);
 				$userInfoPrepared['country'] = trim($userInfoRaw['billing_country_id']);
 			}
-			
-			if ($userInfoPrepared['firstname'] === '' && $userInfoPrepared['lastname'] === ''){
+
+			if ($userInfoPrepared['firstname'] === '' && $userInfoPrepared['lastname'] === '')
+			{
 				$userInfoPrepared['firstname'] = trim($userInfoRaw['shipping_firstname']);
 				$userInfoPrepared['lastname'] = trim($userInfoRaw['shipping_lastname']);
 				$userInfoPrepared['email'] = $this->getRandomEmail($counter);
@@ -100,37 +112,65 @@ abstract class AbstractExport
 			$counter++;
 			$result[] = $userInfoPrepared;
 		}
-		return $result;	
+		return $result;
 	}
-	
-	private function parsePartialFormal($data)
-	{
+
+	private function parsePartialFormal($data, $webSite)
+	{	
 		$result = [];
-		foreach ($data as $userInfoRaw) {
+		$count = 0;
+		foreach ($data as $userInfoRaw)
+		{		
 			$userInfoPrepared = $this->userInfoPrepared;
-			$userInfoPrepared['email'] = $userInfoRaw['email'];
 			$userInfoPrepared['firstname'] = $userInfoRaw['firstname'];
 			$userInfoPrepared['lastname'] = $userInfoRaw['lastname'];
-			$userInfoPrepared['telephone'] = $userInfoRaw['phone'];
+			$userInfoPrepared['telephone'] = $userInfoRaw['phonenumber'];
 			$userInfoPrepared['city'] = trim($userInfoRaw['city']);
 			$userInfoPrepared['state'] = trim($userInfoRaw['state']);
 			$userInfoPrepared['country'] = trim($userInfoRaw['country']);
-			$userInfoPrepared['postal'] = trim($userInfoRaw['postal']);
-			$userInfoPrepared['address'] = trim($userInfoRaw['billing_address1']) . 
-											' ' . trim($userInfoRaw['billing_address2']);
-			if (trim($userInfoRaw['company']) !== '' ){
-				$userInfoPrepared['company'] = trim($userInfoRaw['company']);
-			} elseif (trim($userInfoRaw['company']) === '' && trim($userInfoPrepared['address']) !== ''){
+			$userInfoPrepared['postal'] = trim($userInfoRaw['postalcode']);
+			$userInfoPrepared['address'] = trim($userInfoRaw['billingaddress1']) .
+					' ' . trim($userInfoRaw['billingaddress2']);
+			if (trim($userInfoRaw['companyname']) !== '')
+			{
+				$userInfoPrepared['company'] = trim($userInfoRaw['companyname']);
+			}
+			elseif (trim($userInfoRaw['companyname']) === '' && trim($userInfoPrepared['address']) !== '')
+			{
 				$userInfoPrepared['company'] = $this->unknownCompany;
-			}			
-			$userInfoPrepared['website'] = $this->app['CAS'];	
+			}
+			$name = trim($userInfoPrepared['firstname']) . trim($userInfoPrepared['lastname']);
+			if ($name !== '')
+			{		
+				$userInfoPrepared['email'] = (trim($userInfoRaw['emailaddress']) === '') ?
+						$this->getRandomEmail() :
+						trim($userInfoRaw['emailaddress']);
+			}
+			$userInfoPrepared['website'] = $webSite;
 			$result[] = $userInfoPrepared;
+			$count++;
 		}
-		return $result;	
+		return $result;
 	}
-	
+
 	private function getRandomEmail($index)
 	{
-		return 'noemail' . $index . '@email.com';
+		$date = new \DateTime();
+		return $date->getTimestamp() . '@email.com';
+		//return 'noemail' . $index . '@email.com';
 	}
+	
+	private function determineWebsite($pathToFile){
+		$customers = ['ti', 'cas', 'ci'];		
+		$pathToFile = strtolower($pathToFile);
+		$currentCustomer = null;
+		for($i = 0, $count = count($customers); $i < $count; $i++){			
+			if (strpos($pathToFile, $customers[$i]) !== false) {			
+				$currentCustomer = strtoupper($customers[$i]);
+			}
+		}
+		
+		return $this->app[$currentCustomer];
+	}
+
 }

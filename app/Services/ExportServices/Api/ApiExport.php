@@ -17,37 +17,36 @@ class ApiExport extends AbstractExport
 	public function export($data, $count = false, $startIndex = 0)
 	{		
 		$index;
-		$count = (!$count) ? count($data) : $count;
-		try {		
-			$registered_user_group = \kyUserGroup::getAll()
+		$count = (!$count) ? count($data) : $count;				
+		$registered_user_group = \kyUserGroup::getAll()
 					->filterByTitle("Registered")
-					->first();	
-			
-			for($i = $startIndex; $i < $count; $i++){
+					->first();				
+		for($i = $startIndex; $i < $count; $i++){
+			try {		
 				$index = $i;
 				$organization = null;						
 				$user = $registered_user_group
-					->newUser($data[$i]['firstname'] . ' ' . $data[$i]['lastname'], $data[$i]['email'], $this->generateRandomString())						
-					->setPhone($data[$i]['telephone'])
-					->setSendWelcomeEmail(false) //sendwelcomeemail
-					->create();	
+						->newUser($data[$i]['firstname'] . ' ' . $data[$i]['lastname'], $data[$i]['email'], $this->generateRandomString())						
+						->setPhone($data[$i]['telephone'])
+						->setSendWelcomeEmail(false) //sendwelcomeemail
+						->create();	
 				if ($data[$i]['company'] !== '') {
 					$organization = $this->createOrganization($data[$i]);
 					$user = \kyUser::get($user->getId());
 					$user->setUserOrganization($organization);
 					$user->update();
 				}				
-			}
+			} catch (\Exception $ex) {
+				$tmp = $index  + 1;
+				$errorStr = 'Cought some exception. Error: ' . $ex->getMessage() . "\n"				
+							. 'Number failed user:' . $tmp . "\n"
+							. 'Amount data: ' . $count . "\n\n";
+				Logger::appendLogFile($this->app['log_file_apiExport'], $errorStr);	
+				//sleep(1);
+				//$this->export($data, $count, $index + 1);
+			}			
 		} 
-		catch (\Exception $ex) {
-			$tmp = $index  + 1;
-			$errorStr = 'Cought some exception. Error: ' . $ex->getMessage() . "\n"				
-					. 'Number failed user:' . $tmp . "\n"
-					. 'Amount data: ' . $count . "\n\n";
-			Logger::appendLogFile($this->app['log_file_apiExport'], $errorStr);	
-			//sleep(1);
-			$this->export($data, $count, $index + 1);
-		}
+		
 		
 		//var_dump($count);
 	}
